@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!--FireBase SDK-->
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <form id="updatePasswordForm">
+        <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 h-[25rem] w-[25rem]">
+            <div class="flex justify-center">
+                <h1 class="text-3xl mb-5 text-white">Update Password</h1>
+            </div>
+            <div class="flex justify-center">
+                <p class="mb-1 text-white">NEW PASSWORD</p>
+            </div>
+
+            <div class="flex justify-center">
+                <input type="password" placeholder="Create new Password" class="rounded-md px-6 py-2" id="newPassword">
+            </div>
+            <p id="newPasswordMsg" class="text-red-600 flex justify-center mb-5"></p>
+                
+            <div class="flex justify-center">
+                <p class="mb-1 text-white">CONFIRM PASSWORD</p>
+            </div>
+
+            <div class="flex justify-center">
+                <input type="password" placeholder="Confirm Password" class="rounded-md px-6 py-2" id="confirmPassword">    
+            </div>
+            <p id="updatePasswordMsg1" class="text-red-600 flex justify-center"></p>
+            <p id="updatePasswordMsg2" class="text-red-600 flex justify-center mb-5"></p>
+
+            <div class="flex justify-center">
+                <button class="bg-sky-500 hover:bg-sky-700 px-2 py-2 rounded-md text-white" id="updateBtn">Update</button>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        const updatePasswordForm = document.getElementById("updatePasswordForm");
+        const newPassword = document.getElementById("newPassword");
+        const confirmPassword = document.getElementById("confirmPassword");
+        const updateBtn = document.getElementById("updateBtn");
+        const newPasswordMsg = document.getElementById("newPasswordMsg")
+        const updatePasswordMsg1 = document.getElementById("updatePasswordMsg1");
+        const updatePasswordMsg2 = document.getElementById("updatePasswordMsg2");
+
+        newPassword.addEventListener("change", function(event){
+            console.log(event.target.value);
+        })
+
+        confirmPassword.addEventListener("change", function(event){
+            console.log(event.target.value);
+        })
+
+        function validateFormData(newPassword, confirmPassword){
+            if(newPassword==="" && confirmPassword===""){
+                newPasswordMsg.textContent="*Required";
+                updatePasswordMsg1.textContent="*Required";
+            }
+            else if(newPassword!=confirmPassword){
+                updatePasswordMsg2.textContent="*Passwords Must Match";
+                newPasswordMsg.textContent="";
+                updatePasswordMsg1.textContent="";
+            }
+
+            else{
+                newPasswordMsg.textContent="";
+                updatePasswordMsg1.textContent="";
+                updatePasswordMsg2.textContent="";
+            }
+        }
+
+        function resetForm(){
+            newPassword.value="",
+            confirmPassword.value=""
+        }
+
+        function saveData(newPassword,confirmPassword){
+            const firebaseConfig = {
+                apiKey: "AIzaSyCbxuDXpi5G-qxgjYDNL7l67MJHWurl2pw",
+                authDomain: "updatepasswordform.firebaseapp.com",
+                databaseURL: "https://updatepasswordform-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "updatepasswordform",
+                storageBucket: "updatepasswordform.appspot.com",
+                messagingSenderId: "1078730210784",
+                appId: "1:1078730210784:web:e4370ab2674396f6f07f85"
+            };
+
+            firebase.initializeApp(firebaseConfig);
+
+            const db = firebase.database().ref("ReqForm");
+
+            const newRef = db.push();
+
+            newRef.set(
+                {
+                    newPassword:newPassword,
+                    confirmPassword:confirmPassword
+                }
+            );
+        }
+
+        updatePasswordForm.addEventListener("submit", function submit(event){
+            event.preventDefault();
+            validateFormData(newPassword.value,confirmPassword.value);
+            saveData(newPassword.value,confirmPassword.value)
+            resetForm();
+        })
+    </script>
+</body>
+</html>
